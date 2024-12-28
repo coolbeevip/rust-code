@@ -81,17 +81,18 @@ fn test_ownership() {
 
     // Copy 类型不会发生所有权移动
     let a = 5;
-    let b = a; // 所有的整数，浮点数，布尔值，字符，元组，固定大小的数组都是 Copy 类型，赋值时会复制值
+    let _b = a; // 所有的整数，浮点数，布尔值，字符，元组，固定大小的数组都是 Copy 类型，赋值时会复制值
     assert_eq!(a, 5);
 
     // 自定义类型默认不是 Copy 类型，会发生所有权转移
     let x = Label{number: 3};
-    let y = x; // x 的所有权转移到 y
+    assert_eq!(x.number, 3);
+    let _y = x; // x 的所有权转移到 y
     // assert_eq!(x.number, 3); 错误：发生了所有权转移
 
     // 自定义类型显示的声明为 Copy 类型
     let x = LabelCopy{number: 3};
-    let y = x; // 因为 LabelCopy 被声明成了 Copy 类型，所以会复制，而不是所有权转移
+    let _y = x; // 因为 LabelCopy 被声明成了 Copy 类型，所以会复制，而不是所有权转移
     assert_eq!(x.number, 3);
 
     // 引用计数器 Rc, Arc(线程安全)
