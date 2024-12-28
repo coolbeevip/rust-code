@@ -134,3 +134,17 @@ fn test_ref_ref() {
     assert_eq!(**rr, 5);
     assert_eq!(***&rr, 5);
 }
+
+#[test]
+fn test_ref_compare() {
+    // 引用的比较
+    let x = 10;
+    let y = 10;
+    let rx = &x;
+    let rx1 = &x;
+    let ry = &y;
+
+    assert_eq!(rx, ry); // 引用的比较是比较引用指向的值
+    assert!(!std::ptr::eq(rx, ry)); // eq 比较的是引用的地址，所以不等
+    assert!(std::ptr::eq(rx, rx1)); // rx 和 rx1 指向的都是相同的地址 x 所以相等
+}
