@@ -119,3 +119,18 @@ fn test_modify_ref() {
     assert_eq!(*r, 20);
     assert_eq!(x, 10); // 在 C++ 中引用被重新赋值会修改引用指向的值，而在 Rust 中 x 的值没有改变
 }
+
+#[test]
+fn test_ref_ref() {
+    // 引用的引用
+    // 引用的引用在Rust中并不常见，但在某些情况下可能会有用。
+    // 一个经典的使用场景是当你需要传递一个引用的引用给一个函数时，这个函数需要对引用本身进行操作，而不是对引用指向的值进行操作
+    let x = 5;
+    let r = &x; // r 是 x 的引用
+    let rr = &r; // rr 是 r 的引用，即引用的引用
+
+    assert_eq!(x, 5);
+    assert_eq!(*r, 5);
+    assert_eq!(**rr, 5);
+    assert_eq!(***&rr, 5);
+}
