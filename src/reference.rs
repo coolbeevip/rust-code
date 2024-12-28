@@ -148,3 +148,36 @@ fn test_ref_compare() {
     assert!(!std::ptr::eq(rx, ry)); // eq 比较的是引用的地址，所以不等
     assert!(std::ptr::eq(rx, rx1)); // rx 和 rx1 指向的都是相同的地址 x 所以相等
 }
+
+#[test]
+fn test_ref_null() {
+    // 引用的空指针
+    // Rust 中没有空指针，所以引用也不可能为空
+    // let r: &i32 = null; // 错误，引用不可能为空
+
+    struct Container {
+        value: i32,
+    }
+
+    impl Container {
+        fn new(value: i32) -> Self {
+            Container { value }
+        }
+
+        fn maybe_get_value(&self, condition: bool) -> Option<&i32> {
+            if condition {
+                Some(&self.value) // 返回对结构体字段的引用
+            } else {
+                None // 返回一个空引用
+            }
+        }
+    }
+
+    let container = Container::new(5);
+
+    if let Some(value) = container.maybe_get_value(true) {
+        println!("{}", value); // 输出: 5
+    } else {
+        println!("没有值");
+    }
+}
