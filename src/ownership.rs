@@ -16,10 +16,14 @@ fn foo_mut(v: &mut Vec<i32>) {
 //     &s // 返回对局部变量的引用
 // } // s 在这里被释放，返回的引用变成悬垂引用
 
-struct Label{number: u32}
+struct Label {
+    number: u32,
+}
 
 #[derive(Copy, Clone)]
-struct LabelCopy{number: u32}
+struct LabelCopy {
+    number: u32,
+}
 
 // #[derive(Copy, Clone)]
 // struct LabelMistake{number: String} 因为 String 不是 Copy 类型，所以这个声明会失败
@@ -54,7 +58,7 @@ fn test_ownership() {
 
     // 并不是所有对象的拥有都能被移动
     let mut v = Vec::new();
-    for i in 101 .. 106 {
+    for i in 101..106 {
         v.push(i.to_string());
     }
     // let third = v[2]; // 这个赋值会失败，不能移动到 Vec 索引结构之外
@@ -67,14 +71,16 @@ fn test_ownership() {
 
     // 循环 vec 会导致所有权转移，循环后 v 将被设置成未初始化状态
     let mut v = Vec::new();
-    for i in 101 .. 106 {
+    for i in 101..106 {
         v.push(i.to_string());
     }
-    for s in &v { // 使用引用循环不会发生所有权转移
+    for s in &v {
+        // 使用引用循环不会发生所有权转移
         println!("{}", s);
     }
     assert_eq!(v, vec!["101", "102", "103", "104", "105"]);
-    for s in v { // 所有权转移
+    for s in v {
+        // 所有权转移
         println!("{}", s);
     }
     // assert_eq!(v, vec!["101", "102", "103", "104", "105"]); // 错误 v 未初始化
@@ -85,13 +91,13 @@ fn test_ownership() {
     assert_eq!(a, 5);
 
     // 自定义类型默认不是 Copy 类型，会发生所有权转移
-    let x = Label{number: 3};
+    let x = Label { number: 3 };
     assert_eq!(x.number, 3);
     let _y = x; // x 的所有权转移到 y
-    // assert_eq!(x.number, 3); 错误：发生了所有权转移
+                // assert_eq!(x.number, 3); 错误：发生了所有权转移
 
     // 自定义类型显示的声明为 Copy 类型
-    let x = LabelCopy{number: 3};
+    let x = LabelCopy { number: 3 };
     let _y = x; // 因为 LabelCopy 被声明成了 Copy 类型，所以会复制，而不是所有权转移
     assert_eq!(x.number, 3);
 
