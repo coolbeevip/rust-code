@@ -185,7 +185,6 @@ fn test_ref_null() {
 
 #[test]
 fn test_expression_ref() {
-
     fn factorial(n: usize) -> usize {
         (1..n + 1).product()
     }
