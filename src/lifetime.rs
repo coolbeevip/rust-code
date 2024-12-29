@@ -24,4 +24,17 @@ mod tests {
         }
         assert_eq!(result, "long string is long");
     }
+
+    #[test]
+    fn test_ref_parameter() {
+        // 把引用传递给函数，会检查引用的生命周期是否符合函数的生命周期定义
+        static P: i32 = 10;
+        fn f(p: &'static i32) -> &i32 {
+            p
+        }
+
+        let x = 10;
+        _ = f(&P);
+        // _ = f(&x); 编译失败，因为 x 的生命周期比 'static 短
+    }
 }
