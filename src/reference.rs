@@ -3,6 +3,7 @@
 // 例如 &T，其中 T 是被引用的值的类型。引用的生命周期是在编译时确定的，编译器会检查引用的生命周期是否符合 Rust 的借用规则。
 
 use std::collections::HashMap;
+use std::time::Instant;
 
 struct Label {
     number: u32,
@@ -180,4 +181,71 @@ fn test_ref_null() {
     } else {
         println!("没有值");
     }
+}
+
+#[test]
+fn test_expression_ref() {
+
+    fn factorial(n: usize) -> usize {
+        (1..n + 1).product()
+    }
+
+    let iterations = 10_000_000;
+
+    // Measure time for using reference
+    let start = Instant::now();
+    for _ in 0..iterations {
+        let r = &factorial(6); // avoid data copying
+        let _ = r + &1000;
+    }
+    let duration_ref = start.elapsed();
+
+    // Measure time for not using reference
+    let start = Instant::now();
+    for _ in 0..iterations {
+        let result = factorial(6); // data copying
+        let _ = result + 1000;
+    }
+    let duration_no_ref = start.elapsed();
+
+    println!("Time with reference: {:?}", duration_ref);
+    println!("Time without reference: {:?}", duration_no_ref);
+    assert!(duration_ref > duration_no_ref); // 这是一个错误的断言
+}
+
+#[test]
+fn test_expression_ref2() {
+    fn factorial(n: usize) -> usize {
+        (1..n + 1).product()
+    }
+
+    let iterations = 10_000_000;
+    let mut total_duration_ref = std::time::Duration::new(0, 0);
+    let mut total_duration_no_ref = std::time::Duration::new(0, 0);
+    let test_runs = 10;
+
+    for _ in 0..test_runs {
+        // Measure time for using reference
+        let start = Instant::now();
+        for _ in 0..iterations {
+            let r = &factorial(6); // avoid data copying
+            let _ = r + &1000;
+        }
+        total_duration_ref += start.elapsed();
+
+        // Measure time for not using reference
+        let start = Instant::now();
+        for _ in 0..iterations {
+            let result = factorial(6); // copying
+            let _ = result + 1000;
+        }
+        total_duration_no_ref += start.elapsed();
+    }
+
+    let avg_duration_ref = total_duration_ref / test_runs;
+    let avg_duration_no_ref = total_duration_no_ref / test_runs;
+
+    println!("Average time with reference: {:?}", avg_duration_ref);
+    println!("Average time without reference: {:?}", avg_duration_no_ref);
+    assert!(avg_duration_ref > avg_duration_no_ref); // 这是一个错误的断言
 }
