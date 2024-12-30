@@ -53,4 +53,30 @@ mod tests {
         }
         assert_eq!(s.r, &10);
     }
+
+    #[test]
+    fn test_diff_lifetime() {
+        struct S<'a, 'b> {
+            x: &'a i32,
+            y: &'b i32
+        }
+
+        // 因为 x 和 y 的生命周期不同，所以编译失败
+        // struct S<'a> {
+        //     x: &'a i32,
+        //     y: &'a i32
+        // }
+
+        let x = 10;
+        let r;
+        {
+            let y = 20;
+            {
+                let s = S { x: &x, y: &y };
+                r = s.x
+            }
+
+        }
+        println!("{:?}", r);
+    }
 }
