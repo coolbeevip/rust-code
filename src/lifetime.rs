@@ -37,4 +37,20 @@ mod tests {
         _ = f(&P);
         // _ = f(&x); 编译失败，因为 x 的生命周期比 'static 短
     }
+
+    #[test]
+    fn test_ref_struct() {
+        // 包含引用的结构体 S 的生命周期不能超过引用的生命周期
+        struct S<'a> {
+            r: &'a i32
+        }
+
+        let s;
+        let x = 10;
+        {
+            // let x = 10; // 如果 x 在这里定义则编译失败，因为 x 的生命周期比 s 的生命周期短
+            s = S { r: &x };
+        }
+        assert_eq!(s.r, &10);
+    }
 }
