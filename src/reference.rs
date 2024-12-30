@@ -218,17 +218,19 @@ fn test_expression_ref2() {
         (1..n + 1).product()
     }
 
-    let iterations = 10_000_000;
+    let iterations = 1_000_000;
     let mut total_duration_ref = std::time::Duration::new(0, 0);
     let mut total_duration_no_ref = std::time::Duration::new(0, 0);
     let test_runs = 10;
 
+    let mut ref_vec = Vec::new();
     for _ in 0..test_runs {
         // Measure time for using reference
         let start = Instant::now();
         for _ in 0..iterations {
             let r = &factorial(6); // avoid data copying
-            let _ = r + &1000;
+            let ra = r + &1000;
+            ref_vec.push(ra);
         }
         total_duration_ref += start.elapsed();
 
@@ -236,10 +238,12 @@ fn test_expression_ref2() {
         let start = Instant::now();
         for _ in 0..iterations {
             let result = factorial(6); // copying
-            let _ = result + 1000;
+            let ra = result + 1000;
+            ref_vec.push(ra);
         }
         total_duration_no_ref += start.elapsed();
     }
+    println!("ref_vec: {:?}", ref_vec.len());
 
     let avg_duration_ref = total_duration_ref / test_runs;
     let avg_duration_no_ref = total_duration_no_ref / test_runs;
